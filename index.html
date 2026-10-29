@@ -11,7 +11,6 @@
             --border-color: #222222;
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
-            --accent-color: #ffffff;
             --accent-hover: #dddddd;
             --danger-color: #ff4444;
             --success-color: #00C851;
@@ -66,17 +65,11 @@
         }
 
         .screen {
-            display: none;
+            display: none !important;
         }
 
         .screen.active {
             display: block !important;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
@@ -88,7 +81,6 @@
             padding-left: 12px;
         }
 
-        /* Menu Principal */
         .menu-grid {
             display: grid;
             gap: 16px;
@@ -105,28 +97,17 @@
             font-weight: 500;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
         }
 
         .menu-btn:hover {
             border-color: #ffffff;
             background-color: #161616;
-            transform: translateX(4px);
         }
 
-        .menu-btn span {
-            font-size: 20px;
-            color: var(--text-secondary);
-        }
-
-        .menu-btn:hover span {
-            color: #ffffff;
-        }
-
-        /* Formulários e Inputs */
         .form-group {
             margin-bottom: 20px;
         }
@@ -149,14 +130,12 @@
             border-radius: 6px;
             font-size: 15px;
             outline: none;
-            transition: border-color 0.2s;
         }
 
-        input:focus, select:focus {
+        input:focus {
             border-color: #ffffff;
         }
 
-        /* Botões de Ação */
         .btn-group {
             display: flex;
             gap: 12px;
@@ -171,7 +150,6 @@
             font-weight: 600;
             cursor: pointer;
             border: none;
-            transition: opacity 0.2s;
         }
 
         .btn-primary {
@@ -179,19 +157,10 @@
             color: #000000;
         }
 
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
-        }
-
         .btn-secondary {
             background-color: transparent;
             color: var(--text-color);
             border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--text-secondary);
-            background-color: #111111;
         }
 
         .btn-danger {
@@ -201,13 +170,9 @@
             padding: 6px 12px;
             font-size: 13px;
             border-radius: 4px;
+            cursor: pointer;
         }
 
-        .btn-danger:hover {
-            background-color: #220000;
-        }
-
-        /* Tabelas e Listas */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -234,15 +199,6 @@
             font-weight: 600;
             text-transform: uppercase;
             font-size: 12px;
-            letter-spacing: 1px;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background-color: #080808;
         }
 
         .route-input {
@@ -273,7 +229,6 @@
             font-style: italic;
         }
 
-        /* Rodapé */
         footer {
             text-align: center;
             padding: 24px;
@@ -281,13 +236,6 @@
             font-size: 13px;
             color: var(--text-secondary);
             background-color: var(--bg-color);
-            letter-spacing: 0.5px;
-        }
-
-        @media (max-width: 600px) {
-            .btn-group {
-                flex-direction: column-reverse;
-            }
         }
     </style>
 </head>
@@ -303,13 +251,13 @@
         <div id="screen-home" class="screen active">
             <h2>Menu Principal</h2>
             <div class="menu-grid">
-                <button class="menu-btn" onclick="navigateTo('screen-cadastro')">
+                <button type="button" class="menu-btn" onclick="openScreen('screen-cadastro')">
                     Cadastro de motoristas <span>&rarr;</span>
                 </button>
-                <button class="menu-btn" onclick="navigateTo('screen-roteirizar')">
+                <button type="button" class="menu-btn" onclick="openScreen('screen-roteirizar')">
                     Roteirizar motoristas <span>&rarr;</span>
                 </button>
-                <button class="menu-btn" onclick="navigateTo('screen-disponiveis')">
+                <button type="button" class="menu-btn" onclick="openScreen('screen-disponiveis')">
                     Motoristas disponíveis <span>&rarr;</span>
                 </button>
             </div>
@@ -320,24 +268,24 @@
             <h2>Cadastro de Motoristas</h2>
             <form id="form-driver" onsubmit="saveDriver(event)">
                 <div class="form-group">
-                    <label for="driver-name">Nome do Motorista</label>
+                    <label>Nome do Motorista</label>
                     <input type="text" id="driver-name" required placeholder="Ex: Carlos Silva">
                 </div>
                 <div class="form-group">
-                    <label for="driver-plate">Placa do Veículo</label>
+                    <label>Placa do Veículo</label>
                     <input type="text" id="driver-plate" required placeholder="Ex: ABC-1234">
                 </div>
                 <div class="form-group">
-                    <label for="driver-type">Tipo de Veículo</label>
+                    <label>Tipo de Veículo</label>
                     <input type="text" id="driver-type" required placeholder="Ex: VUC / 3/4 / Toco">
                 </div>
                 <div class="form-group">
-                    <label for="driver-boxes">Quantidade Média de Caixas</label>
+                    <label>Quantidade Média de Caixas</label>
                     <input type="number" id="driver-boxes" required min="0" placeholder="Ex: 450">
                 </div>
 
                 <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" onclick="navigateTo('screen-home')">Voltar</button>
+                    <button type="button" class="btn btn-secondary" onclick="openScreen('screen-home')">Voltar</button>
                     <button type="submit" class="btn btn-primary">Salvar Motorista</button>
                 </div>
             </form>
@@ -355,9 +303,7 @@
                                 <th style="text-align: right;">Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="drivers-table-body">
-                            <!-- Preenchido via JavaScript -->
-                        </tbody>
+                        <tbody id="drivers-table-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -367,7 +313,7 @@
         <div id="screen-roteirizar" class="screen">
             <h2>Roteirizar Motoristas</h2>
             <div class="form-group">
-                <label for="route-date">Data da Roteirização (Dia de Montagem da Escala)</label>
+                <label>Data da Roteirização (Dia da Escala)</label>
                 <input type="date" id="route-date" onchange="loadRouteData()">
             </div>
 
@@ -377,4 +323,49 @@
                         <tr>
                             <th>Motorista</th>
                             <th>Placa / Tipo</th>
-                            <th>
+                            <th>Média Caixas</th>
+                            <th style="width: 140px;">Nº da Rota</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routing-table-body"></tbody>
+                </table>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="openScreen('screen-home')">Voltar à Tela Inicial</button>
+                <button type="button" class="btn btn-primary" onclick="saveRoutes()">Salvar Escala</button>
+            </div>
+        </div>
+
+        <!-- TELA 4: MOTORISTAS DISPONÍVEIS -->
+        <div id="screen-disponiveis" class="screen">
+            <h2>Motoristas Disponíveis</h2>
+            <div class="form-group">
+                <label>Data das Entregas (Hoje):</label>
+                <input type="date" id="check-date" onchange="loadAvailableDrivers()">
+            </div>
+
+            <p id="info-date-ref" style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; font-style: italic;"></p>
+
+            <div class="table-responsive" style="margin-top: 10px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Motorista</th>
+                            <th>Placa</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="available-table-body"></tbody>
+                </table>
+            </div>
+
+            <div class="btn-group" style="margin-top: 30px;">
+                <button type="button" class="btn btn-secondary" onclick="openScreen('screen-home')">Voltar à Tela Inicial</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Desenvolvido por Movexa
