@@ -70,7 +70,7 @@
         }
 
         .screen.active {
-            display: block;
+            display: block !important;
             animation: fadeIn 0.3s ease-in-out;
         }
 
@@ -294,7 +294,7 @@
 <body>
 
     <header>
-        <img src="logo.jpeg" alt="Logo Movexa" class="logo-img">
+        <img src="logo.jpeg" alt="Logo Movexa" class="logo-img" onerror="this.style.display='none'">
         <div class="system-subtitle">Controle de Escala de Rotas</div>
     </header>
 
@@ -377,122 +377,4 @@
                         <tr>
                             <th>Motorista</th>
                             <th>Placa / Tipo</th>
-                            <th>Média Caixas</th>
-                            <th style="width: 140px;">Nº da Rota</th>
-                        </tr>
-                    </thead>
-                    <tbody id="routing-table-body">
-                        <!-- Preenchido via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="btn-group">
-                <button type="button" class="btn btn-secondary" onclick="navigateTo('screen-home')">Voltar à Tela Inicial</button>
-                <button type="button" class="btn btn-primary" onclick="saveRoutes()">Salvar Escala</button>
-            </div>
-        </div>
-
-        <!-- TELA 4: MOTORISTAS DISPONÍVEIS -->
-        <div id="screen-disponiveis" class="screen">
-            <h2>Motoristas Disponíveis</h2>
-            <div class="form-group">
-                <label for="check-date">Data das Entregas (Hoje):</label>
-                <input type="date" id="check-date" onchange="loadAvailableDrivers()">
-            </div>
-
-            <p id="info-date-ref" style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; font-style: italic;">
-                <!-- Exibe dinamicamente qual data de roteirização foi verificada -->
-            </p>
-
-            <div class="table-responsive" style="margin-top: 10px;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Motorista</th>
-                            <th>Placa</th>
-                            <th>Tipo</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="available-table-body">
-                        <!-- Preenchido via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="btn-group" style="margin-top: 30px;">
-                <button type="button" class="btn btn-secondary" onclick="navigateTo('screen-home')">Voltar à Tela Inicial</button>
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        Desenvolvido por Movexa Gestão Logística
-    </footer>
-
-    <script>
-        function getDrivers() {
-            let drivers = localStorage.getItem('movexa_drivers');
-            return drivers ? JSON.parse(drivers) : [];
-        }
-
-        function getSchedules() {
-            let schedules = localStorage.getItem('movexa_schedules');
-            return schedules ? JSON.parse(schedules) : {};
-        }
-
-        // Navegação entre telas
-        function navigateTo(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            window.scrollTo(0, 0);
-
-            if (screenId === 'screen-cadastro') {
-                renderDriversTable();
-            } else if (screenId === 'screen-roteirizar') {
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('route-date').value = today;
-                loadRouteData();
-            } else if (screenId === 'screen-disponiveis') {
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('check-date').value = today;
-                loadAvailableDrivers();
-            }
-        }
-
-        // Cadastro de Motoristas
-        function saveDriver(event) {
-            event.preventDefault();
-            const name = document.getElementById('driver-name').value;
-            const plate = document.getElementById('driver-plate').value;
-            const type = document.getElementById('driver-type').value;
-            const boxes = document.getElementById('driver-boxes').value;
-
-            const drivers = getDrivers();
-            drivers.push({
-                id: Date.now(),
-                name,
-                plate: plate.toUpperCase(),
-                type,
-                boxes: Number(boxes)
-            });
-
-            localStorage.setItem('movexa_drivers', JSON.stringify(drivers));
-            document.getElementById('form-driver').reset();
-            renderDriversTable();
-            alert('Motorista cadastrado com sucesso!');
-        }
-
-        function deleteDriver(id) {
-            if (confirm('Deseja realmente excluir este motorista?')) {
-                let drivers = getDrivers();
-                drivers = drivers.filter(d => d.id !== id);
-                localStorage.setItem('movexa_drivers', JSON.stringify(drivers));
-                renderDriversTable();
-            }
-        }
-
-        function renderDriversTable() {
-            const drivers = getDrivers();
-            const tbody = document.
+                            <th>
