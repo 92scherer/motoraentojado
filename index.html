@@ -11,7 +11,6 @@
             --border-color: #222222;
             --text-color: #ffffff;
             --text-secondary: #aaaaaa;
-            --accent-hover: #dddddd;
             --danger-color: #ff4444;
             --success-color: #00C851;
         }
@@ -42,10 +41,10 @@
             background-color: var(--bg-color);
         }
 
-        .logo-img {
-            max-width: 150px;
-            height: auto;
-            object-fit: contain;
+        .logo-svg {
+            width: 140px;
+            height: 70px;
+            fill: #ffffff;
             margin-bottom: 8px;
         }
 
@@ -65,11 +64,11 @@
         }
 
         .screen {
-            display: none !important;
+            display: none;
         }
 
         .screen.active {
-            display: block !important;
+            display: block;
         }
 
         h2 {
@@ -101,6 +100,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
+            transition: all 0.2s;
         }
 
         .menu-btn:hover {
@@ -161,6 +161,7 @@
             background-color: transparent;
             color: var(--text-color);
             border: 1px solid var(--border-color);
+            cursor: pointer;
         }
 
         .btn-danger {
@@ -242,7 +243,17 @@
 <body>
 
     <header>
-        <img src="logo.jpeg" alt="Logo Movexa" class="logo-img" onerror="this.style.display='none'">
+        <!-- Logotipo Geométrico 'M' integrado perfeitamente em SVG -->
+        <svg class="logo-svg" viewBox="0 0 512 256" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="84,134 167,52 230,52 147,134" />
+            <polygon points="174,134 257,52 320,52 237,134" />
+            <polygon points="84,204 167,122 210,122 127,204" />
+            <polygon points="174,204 257,122 300,122 217,204" />
+            <path d="M 84,134 L 164,134 L 124,204 L 84,204 Z" />
+            <path d="M 174,134 L 254,134 L 214,204 L 174,204 Z" />
+            <path d="M 264,134 L 420,134 L 380,204 L 224,204 Z" />
+            <path d="M 274,52 L 430,52 L 390,122 L 234,122 Z" />
+        </svg>
         <div class="system-subtitle">Controle de Escala de Rotas</div>
     </header>
 
@@ -251,13 +262,13 @@
         <div id="screen-home" class="screen active">
             <h2>Menu Principal</h2>
             <div class="menu-grid">
-                <button type="button" class="menu-btn" onclick="openScreen('screen-cadastro')">
+                <button type="button" class="menu-btn" onclick="goToScreen('screen-cadastro')">
                     Cadastro de motoristas <span>&rarr;</span>
                 </button>
-                <button type="button" class="menu-btn" onclick="openScreen('screen-roteirizar')">
+                <button type="button" class="menu-btn" onclick="goToScreen('screen-roteirizar')">
                     Roteirizar motoristas <span>&rarr;</span>
                 </button>
-                <button type="button" class="menu-btn" onclick="openScreen('screen-disponiveis')">
+                <button type="button" class="menu-btn" onclick="goToScreen('screen-disponiveis')">
                     Motoristas disponíveis <span>&rarr;</span>
                 </button>
             </div>
@@ -285,7 +296,7 @@
                 </div>
 
                 <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" onclick="openScreen('screen-home')">Voltar</button>
+                    <button type="button" class="btn btn-secondary" onclick="goToScreen('screen-home')">Voltar</button>
                     <button type="submit" class="btn btn-primary">Salvar Motorista</button>
                 </div>
             </form>
@@ -332,7 +343,7 @@
             </div>
 
             <div class="btn-group">
-                <button type="button" class="btn btn-secondary" onclick="openScreen('screen-home')">Voltar à Tela Inicial</button>
+                <button type="button" class="btn btn-secondary" onclick="goToScreen('screen-home')">Voltar à Tela Inicial</button>
                 <button type="button" class="btn btn-primary" onclick="saveRoutes()">Salvar Escala</button>
             </div>
         </div>
@@ -362,10 +373,168 @@
             </div>
 
             <div class="btn-group" style="margin-top: 30px;">
-                <button type="button" class="btn btn-secondary" onclick="openScreen('screen-home')">Voltar à Tela Inicial</button>
+                <button type="button" class="btn btn-secondary" onclick="goToScreen('screen-home')">Voltar à Tela Inicial</button>
             </div>
         </div>
     </main>
 
     <footer>
-        Desenvolvido por Movexa
+        Desenvolvido por Movexa Gestão Logística
+    </footer>
+
+    <script>
+        function goToScreen(screenId) {
+            var screens = document.querySelectorAll('.screen');
+            for (var i = 0; i < screens.length; i++) {
+                screens[i].classList.remove('active');
+            }
+            
+            var target = document.getElementById(screenId);
+            if (target) {
+                target.classList.add('active');
+            }
+
+            if (screenId === 'screen-cadastro') {
+                renderDriversTable();
+            } else if (screenId === 'screen-roteirizar') {
+                var today = new Date().toISOString().split('T')[0];
+                document.getElementById('route-date').value = today;
+                loadRouteData();
+            } else if (screenId === 'screen-disponiveis') {
+                var today = new Date().toISOString().split('T')[0];
+                document.getElementById('check-date').value = today;
+                loadAvailableDrivers();
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function getDrivers() {
+            try {
+                var d = localStorage.getItem('movexa_drivers');
+                return d ? JSON.parse(d) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function getSchedules() {
+            try {
+                var s = localStorage.getItem('movexa_schedules');
+                return s ? JSON.parse(s) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveDriver(e) {
+            e.preventDefault();
+            var name = document.getElementById('driver-name').value;
+            var plate = document.getElementById('driver-plate').value;
+            var type = document.getElementById('driver-type').value;
+            var boxes = document.getElementById('driver-boxes').value;
+
+            var drivers = getDrivers();
+            drivers.push({
+                id: Date.now(),
+                name: name,
+                plate: plate.toUpperCase(),
+                type: type,
+                boxes: Number(boxes)
+            });
+
+            localStorage.setItem('movexa_drivers', JSON.stringify(drivers));
+            document.getElementById('form-driver').reset();
+            renderDriversTable();
+            alert('Motorista cadastrado com sucesso!');
+        }
+
+        function deleteDriver(id) {
+            if (confirm('Deseja excluir este motorista?')) {
+                var drivers = getDrivers().filter(function(d) { return d.id !== id; });
+                localStorage.setItem('movexa_drivers', JSON.stringify(drivers));
+                renderDriversTable();
+            }
+        }
+
+        function renderDriversTable() {
+            var drivers = getDrivers();
+            var tbody = document.getElementById('drivers-table-body');
+            tbody.innerHTML = '';
+
+            if (drivers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">Nenhum motorista cadastrado.</td></tr>';
+                return;
+            }
+
+            drivers.forEach(function(d) {
+                tbody.innerHTML += '<tr>' +
+                    '<td><strong>' + d.name + '</strong></td>' +
+                    '<td>' + d.plate + '</td>' +
+                    '<td>' + d.type + '</td>' +
+                    '<td>' + d.boxes + '</td>' +
+                    '<td style="text-align: right;"><button class="btn-danger" onclick="deleteDriver(' + d.id + ')">Excluir</button></td>' +
+                '</tr>';
+            });
+        }
+
+        function loadRouteData() {
+            var date = document.getElementById('route-date').value;
+            var drivers = getDrivers();
+            var schedules = getSchedules();
+            var dateRoutes = schedules[date] || {};
+
+            var tbody = document.getElementById('routing-table-body');
+            tbody.innerHTML = '';
+
+            if (drivers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Cadastre motoristas primeiro.</td></tr>';
+                return;
+            }
+
+            drivers.forEach(function(d) {
+                var currentRoute = dateRoutes[d.id] || '';
+                tbody.innerHTML += '<tr>' +
+                    '<td><strong>' + d.name + '</strong></td>' +
+                    '<td>' + d.plate + ' <span style="color:var(--text-secondary); font-size:12px">(' + d.type + ')</span></td>' +
+                    '<td>' + d.boxes + ' caixas</td>' +
+                    '<td><input type="text" class="route-input" data-id="' + d.id + '" value="' + currentRoute + '" placeholder="Ex: 01"></td>' +
+                '</tr>';
+            });
+        }
+
+        function saveRoutes() {
+            var date = document.getElementById('route-date').value;
+            if (!date) {
+                alert('Selecione uma data.');
+                return;
+            }
+
+            var inputs = document.querySelectorAll('.route-input');
+            var schedules = getSchedules();
+            
+            if (!schedules[date]) {
+                schedules[date] = {};
+            }
+
+            inputs.forEach(function(input) {
+                var driverId = input.getAttribute('data-id');
+                var routeVal = input.value.trim();
+                if (routeVal !== '') {
+                    schedules[date][driverId] = routeVal;
+                } else {
+                    delete schedules[date][driverId];
+                }
+            });
+
+            localStorage.setItem('movexa_schedules', JSON.stringify(schedules));
+            alert('Escala salva com sucesso!');
+            goToScreen('screen-home');
+        }
+
+        function loadAvailableDrivers() {
+            var deliveryDateVal = document.getElementById('check-date').value;
+            if (!deliveryDateVal) return;
+
+            var deliveryDate = new Date(deliveryDateVal + 'T00:00:00');
+            deliveryDate.setDate(deliveryDate.getDate() - 1);
+            var routing
