@@ -294,7 +294,6 @@
 <body>
 
     <header>
-        <!-- Logotipo carregado diretamente do arquivo logo.jpeg -->
         <img src="logo.jpeg" alt="Logo Movexa" class="logo-img">
         <div class="system-subtitle">Controle de Escala de Rotas</div>
     </header>
@@ -368,7 +367,7 @@
         <div id="screen-roteirizar" class="screen">
             <h2>Roteirizar Motoristas</h2>
             <div class="form-group">
-                <label for="route-date">Data Correspondente</label>
+                <label for="route-date">Data da Roteirização (Dia de Montagem da Escala)</label>
                 <input type="date" id="route-date" onchange="loadRouteData()">
             </div>
 
@@ -397,16 +396,16 @@
         <!-- TELA 4: MOTORISTAS DISPONÍVEIS -->
         <div id="screen-disponiveis" class="screen">
             <h2>Motoristas Disponíveis</h2>
-            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
-                Motoristas que não tiveram rotas atribuídas no dia anterior à data selecionada:
-            </p>
-
             <div class="form-group">
-                <label for="check-date">Data de Referência (Exibe o dia anterior):</label>
+                <label for="check-date">Data das Entregas (Hoje):</label>
                 <input type="date" id="check-date" onchange="loadAvailableDrivers()">
             </div>
 
-            <div class="table-responsive" style="margin-top: 20px;">
+            <p id="info-date-ref" style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; font-style: italic;">
+                <!-- Exibe dinamicamente qual data de roteirização foi verificada -->
+            </p>
+
+            <div class="table-responsive" style="margin-top: 10px;">
                 <table>
                     <thead>
                         <tr>
@@ -496,124 +495,4 @@
 
         function renderDriversTable() {
             const drivers = getDrivers();
-            const tbody = document.getElementById('drivers-table-body');
-            tbody.innerHTML = '';
-
-            if (drivers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Nenhum motorista cadastrado.</td></tr>`;
-                return;
-            }
-
-            drivers.forEach(d => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${d.name}</strong></td>
-                        <td>${d.plate}</td>
-                        <td>${d.type}</td>
-                        <td>${d.boxes}</td>
-                        <td style="text-align: right;">
-                            <button class="btn-danger" onclick="deleteDriver(${d.id})">Excluir</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // Roteirização por Data
-        function loadRouteData() {
-            const date = document.getElementById('route-date').value;
-            const drivers = getDrivers();
-            const schedules = getSchedules();
-            const dateRoutes = schedules[date] || {};
-
-            const tbody = document.getElementById('routing-table-body');
-            tbody.innerHTML = '';
-
-            if (drivers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Cadastre motoristas primeiro.</td></tr>`;
-                return;
-            }
-
-            drivers.forEach(d => {
-                const currentRoute = dateRoutes[d.id] || '';
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${d.name}</strong></td>
-                        <td>${d.plate} <span style="color:var(--text-secondary); font-size:12px">(${d.type})</span></td>
-                        <td>${d.boxes} caixas</td>
-                        <td>
-                            <input type="text" class="route-input" data-id="${d.id}" value="${currentRoute}" placeholder="Ex: 01">
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function saveRoutes() {
-            const date = document.getElementById('route-date').value;
-            if (!date) {
-                alert('Selecione uma data correspondente.');
-                return;
-            }
-
-            const inputs = document.querySelectorAll('.route-input');
-            const schedules = getSchedules();
-            
-            if (!schedules[date]) {
-                schedules[date] = {};
-            }
-
-            inputs.forEach(input => {
-                const driverId = input.getAttribute('data-id');
-                const routeVal = input.value.trim();
-                if (routeVal !== '') {
-                    schedules[date][driverId] = routeVal;
-                } else {
-                    delete schedules[date][driverId];
-                }
-            });
-
-            localStorage.setItem('movexa_schedules', JSON.stringify(schedules));
-            alert('Escala de rotas salva com sucesso!');
-            navigateTo('screen-home');
-        }
-
-        // Motoristas Disponíveis (Sem rota no dia anterior)
-        function loadAvailableDrivers() {
-            const checkDateVal = document.getElementById('check-date').value;
-            if (!checkDateVal) return;
-
-            // Calcula a data do dia anterior
-            const currentDate = new Date(checkDateVal + 'T00:00:00');
-            currentDate.setDate(currentDate.getDate() - 1);
-            const prevDateStr = currentDate.toISOString().split('T')[0];
-
-            const drivers = getDrivers();
-            const schedules = getSchedules();
-            const prevDayRoutes = schedules[prevDateStr] || {};
-
-            const tbody = document.getElementById('available-table-body');
-            tbody.innerHTML = '';
-
-            // Filtra motoristas que NÃO possuem rota registrada no dia anterior
-            const availableDrivers = drivers.filter(d => !prevDayRoutes[d.id] || prevDayRoutes[d.id].toString().trim() === '');
-
-            if (availableDrivers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Nenhum motorista disponível (todos foram escalados no dia ${prevDateStr.split('-').reverse().join('/')}).</td></tr>`;
-                return;
-            }
-
-            availableDrivers.forEach(d => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${d.name}</strong></td>
-                        <td>${d.plate}</td>
-                        <td>${d.type}</td>
-                        <td><span class="badge badge-available">Disponível em ${prevDateStr.split('-').reverse().join('/')}</span></td>
-                    </tr>
-                `;
-            });
-        }
-    </script>
-</body>
-</html>
+            const tbody = document.
