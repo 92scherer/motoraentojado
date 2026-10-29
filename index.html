@@ -152,3 +152,459 @@
         /* Botões de Ação */
         .btn-group {
             display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: #000000;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-secondary);
+            background-color: #111111;
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: var(--danger-color);
+            border: 1px solid #441111;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+        }
+
+        .btn-danger:hover {
+            background-color: #220000;
+        }
+
+        /* Tabelas e Listas */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #0a0a0a;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #080808;
+        }
+
+        .route-input {
+            width: 100px;
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-available {
+            background-color: rgba(0, 200, 81, 0.15);
+            color: var(--success-color);
+            border: 1px solid rgba(0, 200, 81, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-secondary);
+            background-color: var(--bg-color);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 600px) {
+            .btn-group {
+                flex-direction: column-reverse;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="system-subtitle">Controle de Escala de Rotas</div>
+    </header>
+
+    <main>
+        <!-- TELA 1: MENU PRINCIPAL -->
+        <div id="screen-home" class="screen active">
+            <h2>Menu Principal</h2>
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="navigateTo('screen-cadastro')">
+                    Cadastro de motoristas <span>&rarr;</span>
+                </button>
+                <button class="menu-btn" onclick="navigateTo('screen-roteirizar')">
+                    Roteirizar motoristas <span>&rarr;</span>
+                </button>
+                <button class="menu-btn" onclick="navigateTo('screen-disponiveis')">
+                    Motoristas disponíveis <span>&rarr;</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- TELA 2: CADASTRO DE MOTORISTAS -->
+        <div id="screen-cadastro" class="screen">
+            <h2>Cadastro de Motoristas</h2>
+            <form id="form-driver" onsubmit="saveDriver(event)">
+                <div class="form-group">
+                    <label for="driver-name">Nome do Motorista</label>
+                    <input type="text" id="driver-name" required placeholder="Ex: Carlos Silva">
+                </div>
+                <div class="form-group">
+                    <label for="driver-plate">Placa do Veículo</label>
+                    <input type="text" id="driver-plate" required placeholder="Ex: ABC-1234">
+                </div>
+                <div class="form-group">
+                    <label for="driver-type">Tipo de Veículo</label>
+                    <input type="text" id="driver-type" required placeholder="Ex: VUC / 3/4 / Toco">
+                </div>
+                <div class="form-group">
+                    <label for="driver-boxes">Quantidade Média de Caixas</label>
+                    <input type="number" id="driver-boxes" required min="0" placeholder="Ex: 450">
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="navigateTo('screen-home')">Voltar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Motorista</button>
+                </div>
+            </form>
+
+            <div style="margin-top: 40px;">
+                <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text-secondary);">Motoristas Cadastrados</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Placa</th>
+                                <th>Tipo</th>
+                                <th>Média Caixas</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="drivers-table-body">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 3: ROTEIRIZAR MOTORISTAS -->
+        <div id="screen-roteirizar" class="screen">
+            <h2>Roteirizar Motoristas</h2>
+            <div class="form-group">
+                <label for="route-date">Data Correspondente</label>
+                <input type="date" id="route-date" onchange="loadRouteData()">
+            </div>
+
+            <div class="table-responsive" style="margin-top: 20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Motorista</th>
+                            <th>Placa / Tipo</th>
+                            <th>Média Caixas</th>
+                            <th style="width: 140px;">Nº da Rota</th>
+                        </tr>
+                    </thead>
+                    <tbody id="routing-table-body">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" onclick="navigateTo('screen-home')">Voltar à Tela Inicial</button>
+                <button type="button" class="btn btn-primary" onclick="saveRoutes()">Salvar Escala</button>
+            </div>
+        </div>
+
+        <!-- TELA 4: MOTORISTAS DISPONÍVEIS -->
+        <div id="screen-disponiveis" class="screen">
+            <h2>Motoristas Disponíveis</h2>
+            <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+                Motoristas que não tiveram rotas atribuídas no dia anterior à data selecionada:
+            </p>
+
+            <div class="form-group">
+                <label for="check-date">Data de Referência (Exibe o dia anterior):</label>
+                <input type="date" id="check-date" onchange="loadAvailableDrivers()">
+            </div>
+
+            <div class="table-responsive" style="margin-top: 20px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Motorista</th>
+                            <th>Placa</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="available-table-body">
+                        <!-- Preenchido via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="btn-group" style="margin-top: 30px;">
+                <button type="button" class="btn btn-secondary" onclick="navigateTo('screen-home')">Voltar à Tela Inicial</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Desenvolvido por Movexa Gestão Logística
+    </footer>
+
+    <script>
+        function getDrivers() {
+            let drivers = localStorage.getItem('movexa_drivers');
+            return drivers ? JSON.parse(drivers) : [];
+        }
+
+        function getSchedules() {
+            let schedules = localStorage.getItem('movexa_schedules');
+            return schedules ? JSON.parse(schedules) : {};
+        }
+
+        // Navegação entre telas
+        function navigateTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+
+            if (screenId === 'screen-cadastro') {
+                renderDriversTable();
+            } else if (screenId === 'screen-roteirizar') {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('route-date').value = today;
+                loadRouteData();
+            } else if (screenId === 'screen-disponiveis') {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('check-date').value = today;
+                loadAvailableDrivers();
+            }
+        }
+
+        // Cadastro de Motoristas
+        function saveDriver(event) {
+            event.preventDefault();
+            const name = document.getElementById('driver-name').value;
+            const plate = document.getElementById('driver-plate').value;
+            const type = document.getElementById('driver-type').value;
+            const boxes = document.getElementById('driver-boxes').value;
+
+            const drivers = getDrivers();
+            drivers.push({
+                id: Date.now(),
+                name,
+                plate: plate.toUpperCase(),
+                type,
+                boxes: Number(boxes)
+            });
+
+            localStorage.setItem('movexa_drivers', JSON.stringify(drivers));
+            document.getElementById('form-driver').reset();
+            renderDriversTable();
+            alert('Motorista cadastrado com sucesso!');
+        }
+
+        function deleteDriver(id) {
+            if (confirm('Deseja realmente excluir este motorista?')) {
+                let drivers = getDrivers();
+                drivers = drivers.filter(d => d.id !== id);
+                localStorage.setItem('movexa_drivers', JSON.stringify(drivers));
+                renderDriversTable();
+            }
+        }
+
+        function renderDriversTable() {
+            const drivers = getDrivers();
+            const tbody = document.getElementById('drivers-table-body');
+            tbody.innerHTML = '';
+
+            if (drivers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Nenhum motorista cadastrado.</td></tr>`;
+                return;
+            }
+
+            drivers.forEach(d => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${d.name}</strong></td>
+                        <td>${d.plate}</td>
+                        <td>${d.type}</td>
+                        <td>${d.boxes}</td>
+                        <td style="text-align: right;">
+                            <button class="btn-danger" onclick="deleteDriver(${d.id})">Excluir</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Roteirização por Data
+        function loadRouteData() {
+            const date = document.getElementById('route-date').value;
+            const drivers = getDrivers();
+            const schedules = getSchedules();
+            const dateRoutes = schedules[date] || {};
+
+            const tbody = document.getElementById('routing-table-body');
+            tbody.innerHTML = '';
+
+            if (drivers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Cadastre motoristas primeiro.</td></tr>`;
+                return;
+            }
+
+            drivers.forEach(d => {
+                const currentRoute = dateRoutes[d.id] || '';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${d.name}</strong></td>
+                        <td>${d.plate} <span style="color:var(--text-secondary); font-size:12px">(${d.type})</span></td>
+                        <td>${d.boxes} caixas</td>
+                        <td>
+                            <input type="text" class="route-input" data-id="${d.id}" value="${currentRoute}" placeholder="Ex: 01">
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function saveRoutes() {
+            const date = document.getElementById('route-date').value;
+            if (!date) {
+                alert('Selecione uma data correspondente.');
+                return;
+            }
+
+            const inputs = document.querySelectorAll('.route-input');
+            const schedules = getSchedules();
+            
+            if (!schedules[date]) {
+                schedules[date] = {};
+            }
+
+            inputs.forEach(input => {
+                const driverId = input.getAttribute('data-id');
+                const routeVal = input.value.trim();
+                if (routeVal !== '') {
+                    schedules[date][driverId] = routeVal;
+                } else {
+                    delete schedules[date][driverId];
+                }
+            });
+
+            localStorage.setItem('movexa_schedules', JSON.stringify(schedules));
+            alert('Escala de rotas salva com sucesso!');
+            navigateTo('screen-home');
+        }
+
+        // Motoristas Disponíveis (Sem rota no dia anterior)
+        function loadAvailableDrivers() {
+            const checkDateVal = document.getElementById('check-date').value;
+            if (!checkDateVal) return;
+
+            // Calcula a data do dia anterior
+            const currentDate = new Date(checkDateVal + 'T00:00:00');
+            currentDate.setDate(currentDate.getDate() - 1);
+            const prevDateStr = currentDate.toISOString().split('T')[0];
+
+            const drivers = getDrivers();
+            const schedules = getSchedules();
+            const prevDayRoutes = schedules[prevDateStr] || {};
+
+            const tbody = document.getElementById('available-table-body');
+            tbody.innerHTML = '';
+
+            // Filtra motoristas que NÃO possuem rota registrada no dia anterior
+            const availableDrivers = drivers.filter(d => !prevDayRoutes[d.id] || prevDayRoutes[d.id].toString().trim() === '');
+
+            if (availableDrivers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Nenhum motorista disponível (todos foram escalados no dia ${prevDateStr.split('-').reverse().join('/')}).</td></tr>`;
+                return;
+            }
+
+            availableDrivers.forEach(d => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${d.name}</strong></td>
+                        <td>${d.plate}</td>
+                        <td>${d.type}</td>
+                        <td><span class="badge badge-available">Disponível em ${prevDateStr.split('-').reverse().join('/')}</span></td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
